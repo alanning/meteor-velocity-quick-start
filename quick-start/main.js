@@ -2,4 +2,4 @@
 
 var quickStart = new QuickStart();
 
-quickStart.exec(['jasmine-unit', 'mocha-web']);
+quickStart.exec(['jasmine-unit', 'mocha-web-velocity']);

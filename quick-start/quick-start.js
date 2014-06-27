@@ -20,13 +20,13 @@ _.extend(QuickStart.prototype, {
     this.copySampleTests(testPackages);
 
     // add in the html-reporter so it looks good
-    //this.addPackages(['velocity-html-reporter']);
+    this.addPackages(['velocity-html-reporter']);
 
     // remove self so example tests aren't added back once user removes them
     // Note: this causes an error on the console:
     //   "error: no such package: 'velocity-quick-start'"
     // but then the app is restarted so it actually works but just looks bad.
-    this.removePackage('velocity-quick-start');
+    //this.removePackage('velocity-quick-start');
   },  // end exec
 
 

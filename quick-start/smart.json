@@ -3,10 +3,11 @@
   "description": "Quick start package that will add a few velocity-compatible test frameworks to your app",
   "homepage": "https://github.com/alanning/meteor-velocity-quick-start",
   "author": "Adrian Lanning",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "git": "https://github.com/alanning/meteor-velocity-quick-start.git",
   "packages": {
+    "velocity-html-reporter": "0.1.0",
     "jasmine-unit": "0.1.13",
-    "mocha-web": "0.2.4"
+    "mocha-web-velocity": "0.3.0"
   }
 }

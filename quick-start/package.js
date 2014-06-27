@@ -11,9 +11,9 @@ Npm.depends({
 Package.on_use(function (api) {
 
   api.use([
-    'jasmine-unit'
-    ,'mocha-web'
-    //,'velocity-html-reporter'
+    'jasmine-unit',
+    'mocha-web-velocity',
+    'velocity-html-reporter'
   ]);
     
   api.add_files(['quick-start.js', 'main.js'], 'server');
