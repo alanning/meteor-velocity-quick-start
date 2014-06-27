@@ -97,9 +97,12 @@ _.extend(QuickStart.prototype, {
 
     source = path.join(pwd, 'packages', 'velocity-quick-start', 
                        'examples-jasmine-unit.js');
-    dest = path.join(pwd, 'tests', 'examples-jasmine-unit.js');
+    dest = path.join(pwd, 'tests');
 
-    command = ['rsync -a', source, dest].join(' ');
+    command = ['mkdir', '-p', dest, '&&', 'cp', source, dest].join(' ');
+
+    DEBUG && console.log("[velocity-quick-start] copy command", command);
+
     this.execShellCommand(command);
 
     /*

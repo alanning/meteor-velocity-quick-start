@@ -1,3 +1,8 @@
+## v0.0.4
+
+* Fix example test copy
+
+
 ## v0.0.3
 
 * Include example jasmine-unit tests
