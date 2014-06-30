@@ -1,3 +1,8 @@
+## v0.0.5
+
+* Remove specific version numbers for dependencies (use latest)
+
+
 ## v0.0.4
 
 * Fix example test copy
