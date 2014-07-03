@@ -29,6 +29,16 @@ Quick start package that will add a few velocity-compatible test frameworks to y
     $ mrt add velocity-quick-start
     $ mrt
     ```
+    
+    This will add the appropriate test frameworks, the html-reporter package, and copy sample tests into the `tests` directory.
+    
+    ```js
+    ... with app running ...
+    CRTL-C (to stop app)
+    $ mrt
+    ```
+    
+    The second time you run it the tests will be executed and you can see the results in the console and the html-reporter overlay.  (Yeah, I know its not ideal that you have to run the app twice to get them to show.  We'll work on that!)
 
 
 ## How to add a new test framework to this quick-start
