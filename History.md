@@ -1,3 +1,8 @@
+## v0.0.6
+
+* Use velocity support for copying sample tests
+
+
 ## v0.0.5
 
 * Remove specific version numbers for dependencies (use latest)

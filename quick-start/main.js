@@ -1,5 +1,9 @@
 "use strict";
 
-var quickStart = new QuickStart();
+var quickStart = new QuickStart(),
+    frameworks = [
+      'jasmine-unit',
+      'mocha-web-velocity'
+    ];
 
-quickStart.exec(['jasmine-unit', 'mocha-web-velocity']);
+quickStart.exec(frameworks);

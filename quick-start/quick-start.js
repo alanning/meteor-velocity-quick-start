@@ -91,40 +91,18 @@ _.extend(QuickStart.prototype, {
 
 
   copySampleTests: function (testPackages) {
-    var source,
-        dest,
-        command;
-
-    source = path.join(pwd, 'packages', 'velocity-quick-start', 
-                       'examples-jasmine-unit.js');
-    dest = path.join(pwd, 'tests');
-
-    command = ['mkdir', '-p', dest, '&&', 'cp', source, dest].join(' ');
-
-    DEBUG && console.log("[velocity-quick-start] copy command", command);
-
-    this.execShellCommand(command);
-
-    /*
-     * Until velocity v0.1.8 drops, just use local jasmine-unit tests
     var i = testPackages.length - 1,
         package;
 
     for (; package = testPackages[i]; i--) {
       try {
-
         Meteor.call('copySampleTests', {framework: package});
-
-        DEBUG && console.log("[velocity-quick-start] copied sample tests for " +
-                             "framework: '" + package + "'.");
-
       } catch (ex) {
         console.log("[velocity-quick-start] could not generate sample tests " +
                     "for test framework: '" + package +
                     "'.  Reason:", ex.message);
       }
     }
-    */
   },  // end copySampleTests
 
 
