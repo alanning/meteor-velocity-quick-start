@@ -13,6 +13,7 @@ Package.on_use(function (api) {
     'underscore',
     'jasmine-unit',
     'mocha-web-velocity',
+    'jasmine',
     'velocity-html-reporter'
   ]);
     
