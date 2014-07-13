@@ -1,3 +1,8 @@
+## v0.0.7
+
+* Improve updating of .meteor/packages file
+
+
 ## v0.0.6
 
 * Use velocity support for copying sample tests

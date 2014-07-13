@@ -3,7 +3,6 @@ Package.describe({
 });
 
 Npm.depends({
-    'lodash': '2.4.1',
     'rimraf': '2.2.8',
     'rolling_timeout_exec': '0.0.1'
 });
@@ -11,6 +10,7 @@ Npm.depends({
 Package.on_use(function (api) {
 
   api.use([
+    'underscore',
     'jasmine-unit',
     'mocha-web-velocity',
     'velocity-html-reporter'

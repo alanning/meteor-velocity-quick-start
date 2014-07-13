@@ -6,8 +6,8 @@ var pwd = process.env.PWD,
     DEBUG = process.env.DEBUG,
     fs = Npm.require('fs'),
     path = Npm.require('path'),
-    _ = Npm.require('lodash'),
-    rimraf = Npm.require('rimraf');
+    rimraf = Npm.require('rimraf'),
+    exec = Npm.require('rolling_timeout_exec').exec;
 
 
 _.extend(QuickStart.prototype, {
@@ -15,12 +15,9 @@ _.extend(QuickStart.prototype, {
   exec: function (testPackages) {
     DEBUG && console.log("[velocity-quick-start] executed");
 
-    this.addPackages(testPackages);
-
     this.copySampleTests(testPackages);
 
-    // add in the html-reporter so it looks good
-    this.addPackages(['velocity-html-reporter']);
+    this.addPackages(testPackages, 'velocity-html-reporter');
 
     // remove self so example tests aren't added back once user removes them
     // Note: this causes an error on the console:
@@ -30,38 +27,33 @@ _.extend(QuickStart.prototype, {
   },  // end exec
 
 
-  addPackages: function (testPackages) {
-    var i = testPackages.length - 1,
-        package,
+  addPackages: function (/* arguments */) {
+    var requestedPackagesToAdd,
         packagesToAdd = [],
-        meteorPackagesFile,
         smartJson;
 
-    meteorPackagesFile = (this.readMeteorPackagesFile() || '').trim();
+    requestedPackagesToAdd = _.flatten(Array.prototype.slice.call(arguments));
     smartJson = this.readSmartJson();
 
-    for (; package = testPackages[i]; i--) {
-      try {
-
-        DEBUG && console.log("[velocity-quick-start] adding package '" + 
-                             package + "'");
-
-        smartJson.packages[package] = {};
-        if (!this.fileContains(meteorPackagesFile, package)) {
-          meteorPackagesFile = meteorPackagesFile.split('\n');
-          meteorPackagesFile.push(package);
-          meteorPackagesFile = meteorPackagesFile.join('\n');
-        }
-
-      } catch (ex) {
-        console.log("[velocity-quick-start] could not add package for " +
-                    "test framework: '" + package + "'.  Reason:", 
-                    ex.message);
-      }
+    if (!smartJson || !smartJson.packages) {
+        throw new Error("[velocity-quick-start] smart.json file missing " +
+                        "required field 'packages'.  Exiting without adding " +
+                        "packages.");
+        return;
     }
 
-    // update the .meteor/packages file
-    this.writeMeteorPackagesFile(meteorPackagesFile);
+    packageMap = this.slurpPackages();
+
+    _.each(requestedPackagesToAdd, function (package) {
+      if (!packageMap[package]) {
+        DEBUG && console.log("[velocity-quick-start] adding package '" + 
+                             package + "' to .meteor/packages");
+        smartJson.packages[package] = {};
+        packagesToAdd.push(package);
+      }
+    });
+
+    this.updateMeteorPackagesFile(packagesToAdd);
 
     // update the smart.json file
     this.writeSmartJson(smartJson);
@@ -69,25 +61,45 @@ _.extend(QuickStart.prototype, {
   },  // end addPackages
 
 
-  fileContains: function (contents, target) {
-    var lines,
-        regex,
-        i;
+  /**
+   * Read's this app's '.meteor/packages' file and parses out all
+   * the packages.  Returns a hashmap where each package is a key.
+   *
+   * @method slurpPackages
+   * @return {Object} key/value pairs; key = package name, value = true
+   */
+  slurpPackages: function () {
+    var contents,
+        packageMap = {};
 
-    if (!contents) return false;
-
-    regex = new RegExp('^' + target + '$', 'i');
-    lines = contents.split('\n');
-    i = lines.length - 1;
-
-    for (; line = lines[i]; i--) {
-      if (regex.test(line)) {
-        return true
-      }
+    try {
+      contents = (this.readMeteorPackagesFile() || '').trim();
+    } catch (err) {
+      console.log("[velocity-quick-start] Error reading",
+                  path.join(pwd, '.meteor/packages'), err);
+      throw err;
     }
 
-    return false;
-  },  // fileContains
+    if (!contents) {
+      throw new Error("[velocity-quick-start] Invalid state.  The '", 
+                      path.join(pwd, '.meteor/packages'), "file is empty. " +
+                      "This is should not be possible for Meteor apps and " +
+                      "indicates a problem of some kind.");
+    }
+
+    _.each(contents.split('\n'), function (line) {
+      if (!line || !line.trim()) return;
+
+      line = line.trim();
+
+      // skip comments
+      if (line[0] === '#') return;
+
+      packageMap[line] = true;
+    });
+
+    return packageMap;
+  },  // end slurpPackages
 
 
   copySampleTests: function (testPackages) {
@@ -148,21 +160,15 @@ _.extend(QuickStart.prototype, {
     } catch (err) {
       console.log("[velocity-quick-start] Error reading app's " +
                   "smart.json file:", err);
-      return {};
+      throw err;
     }
   },  // end readSmartJson
 
 
-  readMeteorPackagesFile: function () {
-    try {
-      return fs.readFileSync(path.join(pwd, '.meteor/packages')).toString();
-      
-    } catch (err) {
-      console.log("[velocity-quick-start] Error reading app's " +
-                  ".meteor/packages file:", err);
-      return '';
-    }
-  },  // end readMeteorPackagesFile
+  readMeteorPackagesFile: function (filepath) {
+    filepath = filepath || path.join(pwd, '.meteor/packages');
+    return fs.readFileSync(filepath).toString();
+  },
 
 
   writeSmartJson: function (json) {
@@ -182,22 +188,39 @@ _.extend(QuickStart.prototype, {
   },  // end writeSmartJson
 
 
-  writeMeteorPackagesFile: function (contents) {
+  /**
+   * Append new package names to the .meteor/packages file.
+   * If .meteor/packages does not exist, create it.
+   *
+   * @method updateMeteorPackagesFile
+   * @param {Array|String} newPackages List of package names to append
+   */
+  updateMeteorPackagesFile: function (newPackages) {
     var filePath;
 
-    if (!contents) return;
+    if ('string' === typeof newPackages) {
+      newPackages = newPackages.trim();
+    } else if (_.isArray(newPackages)) {
+      newPackages = newPackages.join('\n').trim();
+    } else {
+      return;
+    }
+
+    // bail if empty
+    if (!newPackages) return;
 
     filePath = path.join(pwd, '.meteor/packages');
 
-    // Write to disk
-    if (fs.existsSync(filePath))
-      fs.writeFileSync(filePath, contents);
-  },  // end writeMeteorPackagesFile 
+    if (fs.existsSync(filePath)) {
+      fs.appendFileSync(filePath, '\n' + newPackages);
+    } else {
+      fs.writeFileSync(filePath, newPackages);
+    }
+  },  // end updateMeteorPackagesFile
 
 
   execShellCommand: function (command) {
-    var exec = Npm.require('rolling_timeout_exec').exec,
-        command,
+    var command,
         options,
         child,
         timeout = false;
