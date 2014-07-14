@@ -3,7 +3,8 @@
 var quickStart = new QuickStart(),
     frameworks = [
       'jasmine-unit',
-      'mocha-web-velocity'
+      'mocha-web-velocity',
+      'jasmine'
     ];
 
 quickStart.exec(frameworks);

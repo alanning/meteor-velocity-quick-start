@@ -8,6 +8,7 @@
   "packages": {
     "velocity-html-reporter": "",
     "jasmine-unit": "",
+    "jasmine": "",
     "mocha-web-velocity": ""
   }
 }
