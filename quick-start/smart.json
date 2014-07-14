@@ -3,7 +3,7 @@
   "description": "Quick start package that will add a few velocity-compatible test frameworks to your app",
   "homepage": "https://github.com/alanning/meteor-velocity-quick-start",
   "author": "Adrian Lanning",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "git": "https://github.com/alanning/meteor-velocity-quick-start.git",
   "packages": {
     "velocity-html-reporter": "",

@@ -1,3 +1,8 @@
+## v0.0.8
+
+* Add jasmine test package
+
+
 ## v0.0.7
 
 * Improve updating of .meteor/packages file
