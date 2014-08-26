@@ -51,6 +51,15 @@ These are the test frameworks that are included with this quick-start.  Typicall
 5. Check out the stubs and tests in the `tests` directory and add your own!
    
 
+### Removing sample tests
+
+Meteor doesn't have a way to mark packages as 'run-once' so if you remove the sample tests, quick-start will add them back the next time the app runs.  To avoid this, remove the quick-start package:
+
+`$ mrt remove velocity-quick-start`
+
+The test frameworks and velocity packages will remain.
+
+
 
 
 ### How to add a new test framework to this quick-start
