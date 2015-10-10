@@ -4,6 +4,11 @@ meteor-velocity-quick-start
 Quick start package that will add a few velocity-compatible test frameworks to your app.
 
 
+## Deprecated! ##
+
+NOTE: This package is no longer needed. Check out https://velocity.readme.io/ for more information on testing your Meteor applications.
+
+
 ### Test frameworks
 
 These are the test frameworks that are included with this quick-start.  Typically it is easiest to start with tests that run in-context like `mocha-web-velocity` or `jasmine` since they do not require any stubbing.  Once ready, have a look at writing unit tests using `jasmine-unit` for even speedier execution.
